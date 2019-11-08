@@ -13,4 +13,4 @@ Imports:
   R.utils, data.table, magrittr, ggplot2, rrBLUP, BGLR
 biocViews:
   multtest, snpStats
-
+RoxygenNote: 6.1.1
