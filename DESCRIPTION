@@ -14,3 +14,4 @@ Imports:
 biocViews:
   multtest, snpStats
 RoxygenNote: 6.1.1
+@import data.table
