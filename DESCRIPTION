@@ -1,0 +1,16 @@
+Package: RiPat
+Type: Package
+Title: R-Based Intelligent Prediction and Association Tool  
+Version: 0.1.0
+Author: Chunpeng James Chen
+Maintainer: James Chen <chun-peng.chen@wsu.edu>
+Description: Fomat-free toolsets for running GWAS and GS in R 
+License: GPL-2
+LazyData: FALSE
+Imports:
+  MASS, LDheatmap, genetics, EMMREML, biganalytics,
+	ape, bigmemory, gplots, compiler, scatterplot3d,
+  R.utils, data.table, magrittr, ggplot2, rrBLUP, BGLR
+biocViews:
+  multtest, snpStats
+
