@@ -2,5 +2,7 @@
 exportPattern("^[[:alpha:]]+")
 exportPattern("^[^\\.]")
 
-@import data.table
+#' @import
+data.table
+
 
