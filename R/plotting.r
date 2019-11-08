@@ -1,3 +1,27 @@
+# imports
+library(BGLR)
+library(rrBLUP)
+library(data.table)
+library(magrittr)
+library(ggplot2)
+library(bigmemory)
+library(biganalytics)
+library(compiler) #this library is already installed in R
+library(MASS) # required for ginv
+library(multtest)
+library(gplots)
+library(scatterplot3d)
+library(R.utils)
+library(LDheatmap)
+library(genetics)
+library(ape)
+library(EMMREML)
+source("http://zzlab.net/iPat/Function_iPat.R")
+source("http://zzlab.net/GAPIT/emma.txt")
+source("http://zzlab.net/GAPIT/gapit_functions.txt")
+source("http://zzlab.net/FarmCPU/FarmCPU_functions.txt")
+#
+
 plotHistBV <- function(nameTableGEBV) {
   # Plotting
   dataGEBV = fread(paste0(nameTableGEBV, ".txt"))
