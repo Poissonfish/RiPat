@@ -489,7 +489,7 @@ plotCV <- function(isRaw, nameTableRaw, nameTableAcc) {
     } #Genomewise plot
 
     print("GAPIT.Manhattan accomplished successfully!zw")
-  } #end of GAPIT.Manhattan
+} #end of GAPIT.Manhattan
 
 `iPat.Genotype.View` <-function(myGD = NULL, filename = "_"){
   # Object: Analysis for Genotype data:Distribution of SNP density,Accumulation,Moving Average of density,result:a pdf of the scree plot
@@ -579,6 +579,7 @@ plotCV <- function(isRaw, nameTableRaw, nameTableAcc) {
   rm(GDneob,seqQTNs,Porderb)
   return(seqQTN)
 }
+
 `Blink.LDRemoveBlock`<-function(GDneo=NULL,LD=NULL,Porder=NULL,bound=FALSE,model="A",orientation=NULL){
   #`Blink.LDRemove`<-function(GDneo=NULL,LD=NULL,Porder=NULL,bound=FALSE,model="A",orientation=NULL){
   #Objects: Calculate LD and remove the correlated SNPs
@@ -618,3 +619,4 @@ plotCV <- function(isRaw, nameTableRaw, nameTableAcc) {
   seqQTN=Porder[Psort==1]
   return(seqQTN)
 }
+
