@@ -2,7 +2,7 @@ getSelected <- function(data, strSelect) {
   if (!is.null(data)) {
     if (!is.na(strSelect)) {
       name = strSelect %>% strsplit(split = "sep") %>% do.call(c, .)
-      data = data[ ,..name]
+      data = subset(data, ,name)
     } else {
       name = names(data)
     }
@@ -33,7 +33,7 @@ getCovFromGWAS <- function(isGWASAssit, cutoff,
     ## Order p-value
     snpOrder = order(mapGWAS$P.value)
     mapGWAS = mapGWAS[snpOrder]
-    genotype = rawGenotype[ ,..snpOrder]
+    genotype = subset(rawGenotype, , snpOrder)
     ## Find QTNs
     indexSig = which(mapGWAS$P.value < (cutoff/nrow(tableGWAS)))
     ## Generate a dataframe by number of QTNs
@@ -43,11 +43,11 @@ getCovFromGWAS <- function(isGWASAssit, cutoff,
       sizeQTN = 0
       ### 1 QTNs
     } else if (length(indexSig) == 1) {
-      cGWAS = data.frame(m = genotype[ ,..indexSig])
+      cGWAS = data.frame(m = subset(genotype,,indexSig))
       sizeQTN = 1
       ### 1+ QTNs
     } else {
-      cGWAS = genotype[ ,..indexSig] %>% as.data.frame()
+      cGWAS = subset(genotype, ,indexSig) %>% as.data.frame()
       ## LD Remove
       LD_remain = Blink.LDRemove(cGWAS, .7, indexSig, orientation = "col")
       cGWAS = cGWAS[ ,LD_remain]
