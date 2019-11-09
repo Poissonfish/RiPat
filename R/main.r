@@ -351,7 +351,7 @@ runArgs <- function(args) {
         taxa = IID
         # get selected data
         trait.name = selectP %>% strsplit(split = "sep") %>% do.call(c, .)
-        Y.data = data.frame(FID = FID, IID = IID, subset(Y.data, ,trait.name])
+        Y.data = data.frame(FID = FID, IID = IID, subset(Y.data, ,trait.name))
         names(Y.data) = c("FID", "IID", trait.name)
         Y.path = paste0(Y.path %>% substr(1, nchar(.) - 4), "_trait.txt")
         trait_count = (names(Y.data) %>% length()) - 2
