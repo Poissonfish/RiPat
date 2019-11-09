@@ -2,6 +2,3 @@
 exportPattern("^[[:alpha:]]+")
 exportPattern("^[^\\.]")
 
-#' @import data.table
-importFrom(data.table, fread)
-
