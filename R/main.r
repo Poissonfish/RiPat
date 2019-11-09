@@ -126,7 +126,7 @@ runArgs <- function(args) {
       )
     }
 
-    # Subset Phenotype
+    # Subset Phenotype 
     cat("   Subsetting phenotype ...")
     dataP = getSelected(rawPhenotype, selectP)
     cat("Done\n")
