@@ -9,7 +9,7 @@ runArgs <- function(args) {
 
   # anything other than PLINK
   if (pkgCalled != "PLINK") {
-    for (i in 1:length(arg)) {
+    for (i in 1:length(args)) {
       switch (
         args[i],
         "-wd" = {
