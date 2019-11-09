@@ -619,4 +619,3 @@ plotCV <- function(isRaw, nameTableRaw, nameTableAcc) {
   seqQTN=Porder[Psort==1]
   return(seqQTN)
 }
-
