@@ -1,4 +1,4 @@
-plotHistBV <- function(nameTableGEBV) {
+plotHistBV <- function(nameTableGEBV, trait) {
   # Plotting
   dataGEBV = fread(paste0(nameTableGEBV, ".txt"))
   sizeBin = (range(dataGEBV$GEBV) %>% diff())/20

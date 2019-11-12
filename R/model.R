@@ -14,7 +14,7 @@ getSelected <- function(data, strSelect) {
 }
 
 ########################### iPat Genomic Selection  #############################
-getCovFromGWAS <- function(isGWASAssit, cutoff,
+getCovFromGWAS <- function(isGWASAssist, cutoff,
                            sizeN, dataCov,
                            nameProject, nameTrait,
                            rawGenotype, rawMap) {
@@ -106,7 +106,7 @@ runCrossValidation <- function(finalP, finalG, finalC, isRaw, countFold, countIt
       yTemp = finalP
       yTemp[idxTest] = NA
       ## Predict
-      switch (ANALYSIS,
+      switch (pkgCalled,
               "gBLUP" = {
                 prediction = getAccByGBLUP(finalG, finalP, finalC, finalK, yTemp, idxTest)
               },
@@ -172,7 +172,7 @@ runGBLUP <- function(finalP, finalG, finalC, taxa, project, trait) {
                          Value = c(gblup$Vu, gblup$Ve, gblup$beta, gblup$LL)),
               file = nameTableStat, append = TRUE, row.names = F, col.names = F, sep = "\t")
   # Export plot
-  plotHistBV(nameTableGEBV)
+  plotHistBV(nameTableGEBV, trait)
 }
 
 getAccByGBLUP <- function(X, Y, C, K, YTemp, idxTest) {
@@ -223,7 +223,7 @@ runRRBLUP <- function(finalP, finalG, finalC, taxa, project, trait) {
                          Value = c(rrblup$Vu, rrblup$Ve, rrblup$beta, rrblup$LL)),
               file = nameTableStat, append = TRUE, row.names = F, col.names = F, sep = "\t")
   # Export plot
-  plotHistBV(nameTableGEBV)
+  plotHistBV(nameTableGEBV, trait)
 }
 
 getAccByRRBLUP <- function(X, Y, C, YTemp, idxTest) {
@@ -263,7 +263,7 @@ runBGLR <- function(finalP, finalG, finalC, taxa, project, trait) {
   write.table(x = data.frame(taxa, GEBV = bglr$yHat), file = paste0(nameTableGEBV, ".txt"), quote = F,
               row.names = F, col.names = T, sep = "\t")
   # Export plot
-  plotHistBV(nameTableGEBV)
+  plotHistBV(nameTableGEBV, trait)
 }
 
 getAccByBGLR <- function(X, Y, C, YTemp, idxTest) {

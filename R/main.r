@@ -1,6 +1,6 @@
 runArgs <- function(args) {
   # get package and method
-  pkgCalled = args[1]
+  assign("pkgCalled", args[1], envir = .GlobalEnv)
   if ((pkgCalled == "GAPIT") ||
       (pkgCalled == "FarmCPU") || (pkgCalled == "PLINK"))
     isGWAS = TRUE
@@ -101,26 +101,26 @@ runArgs <- function(args) {
         "-arg" = {
           if (pkgCalled == "GAPIT") {
             i = i + 1
-            model = args[i]
+            assign("model", args[i], envir = .GlobalEnv)
             i = i + 1
-            nPC = as.numeric(args[i])
+            assign("nPC", as.numeric(args[i]), envir = .GlobalEnv)
           } else if (pkgCalled == "FarmCPU") {
             i = i + 1
-            method.bin = args[i]
+            assign("method.bin", args[i], envir = .GlobalEnv)
             i = i + 1
-            maxLoop = as.numeric(args[i])
+            assign("maxLoop", as.numeric(args[i]), envir = .GlobalEnv)            
           } else if (pkgCalled == "gBLUP") {
             # NONE
           } else if (pkgCalled == "rrBLUP") {
             # NONE
           } else if (pkgCalled == "BGLR") {
             i = i + 1
-            modelBGLR = args[i]
+            assign("modelBGLR", args[i], envir = .GlobalEnv)
             i = i + 1
-            nIter = as.numeric(args[i])
+            assign("nIter", as.numeric(args[i]), envir = .GlobalEnv)
             i = i + 1
-            burnIn = as.numeric(args[i])
-            rawKin = NULL
+            assign("burnIn", as.numeric(args[i]), envir = .GlobalEnv)
+            assign("rawKin", NULL, envir = .GlobalEnv)
           }
         }
       )
@@ -137,7 +137,7 @@ runArgs <- function(args) {
     if (is.null(dataC$data)) {
       finalC = NULL
     } else {
-      finalC = data.frame(taxa, datac$data)
+      finalC = data.frame(taxa, dataC$data)
     }
     cat("Done\n")
 
@@ -251,8 +251,9 @@ runArgs <- function(args) {
       }
     }
   } else {
-    # PLINK
+    # ============= PLINK =============
     for (i in 1:length(args)) {
+      print(i)
       switch (
         args[i],
         "-wd" = {
@@ -320,145 +321,145 @@ runArgs <- function(args) {
           pathPLINK = args[i]
         }
       )
+    }
 
-      # Subset Phenotype
-      cat("   Loading phenotype ...")
-      # If no phenotype provided, which would be in
-      if (Y.path == "NA") {
-        Y.data = fread(GD.path, na.strings = c("NA", "NaN")) %>% as.data.frame()
-        Y.path = paste0(GD.path %>% substr(1, nchar(.) - 3), "_trait.txt")
-        write.table(
-          x = data.frame(
-            FID = Y.data[, 1],
-            IID = Y.data[, 2],
-            trait = Y.data[, 6]
-          ),
+    # Subset Phenotype
+    cat("   Loading phenotype ...")
+    # If no phenotype provided, which would be in
+    if (Y.path == "NA") {
+      Y.data = fread(GD.path, na.strings = c("NA", "NaN")) %>% as.data.frame()
+      Y.path = paste0(GD.path %>% substr(1, nchar(.) - 3), "_trait.txt")
+      write.table(
+        x = data.frame(
+          FID = Y.data[, 1],
+          IID = Y.data[, 2],
+          trait = Y.data[, 6]
+        ),
+        file = Y.path,
+        quote = F,
+        row.names = F,
+        sep = '\t'
+      )
+      trait.name = "trait"
+      trait_count = 1
+      suffix = ".assoc"
+      # If phenotype provided
+    } else {
+      Y.data = fread(Y.path, na.strings = c("NA", "NaN"))
+      G.data = fread(GD.path, na.strings = c("NA", "NaN")) %>% as.data.frame()
+      # wrong format for PLINK
+      FID = G.data[, 1]
+      IID = G.data[, 2]
+      taxa = IID
+      # get selected data
+      trait.name = selectP %>% strsplit(split = "sep") %>% do.call(c, .)
+      Y.data = data.frame(FID = FID, IID = IID, subset(Y.data, ,trait.name))
+      names(Y.data) = c("FID", "IID", trait.name)
+      Y.path = paste0(Y.path %>% substr(1, nchar(.) - 4), "_trait.txt")
+      trait_count = (names(Y.data) %>% length()) - 2
+      suffix = ".qassoc"
+    }
+    cat("Done\n")
+
+    # Covariate
+    if (C.path != "NA") {
+      cat("   Loading covariates ...")
+      C.data = fread(C.path) %>% as.data.frame()
+      if (is.character(C.data[, 1]))
+        C.data = C.data[, -1]
+      C.name = selectC %>% strsplit(split = "sep") %>% do.call(c, .)
+      cat("Done\n")
+    } else {
+      C.name = character()
+    }
+
+    # Basic
+    if (model == "GLM") {
+      method = "--assoc"
+    } else {
+      method = "--logistic"
+      suffix = paste0(suffix, ".logistic")
+    }
+    basic = sprintf(
+      "%s --ped %s --map %s %s --allow-no-sex --adjust -ci %s --pheno %s --all-pheno --prune -out %s",
+      paste0('"', pathPLINK, '"'),
+      paste0('"', GD.path, '"'),
+      paste0('"', GM.path, '"'),
+      method,
+      ci,
+      paste0('"', Y.path, '"'),
+      paste0('"', file.path(wd, project), '"')
+    )
+    # QC
+    if (ms != 1)
+      MS = sprintf("--geno %s", ms)
+    else
+      MS = character()
+    if (maf != 0)
+      MAF = sprintf("--maf %s", maf)
+    else
+      MAF = character()
+
+    #Plotting
+    setwd(wd)
+    for (t in 1:trait_count) {
+      ## Rewrite Phenotype
+      if (Y.path != "NA") {
+        tCol = t + 2
+        updateY = Y.data[, c(1:2, tCol)]
+        updateY[is.na(updateY[, 3]), 3] = -9
+        fwrite(
+          x = updateY,
           file = Y.path,
           quote = F,
           row.names = F,
           sep = '\t'
         )
-        trait.name = "trait"
-        trait_count = 1
-        suffix = ".assoc"
-        # If phenotype provided
-      } else {
-        Y.data = fread(Y.path, na.strings = c("NA", "NaN"))
-        G.data = fread(GD.path, na.strings = c("NA", "NaN")) %>% as.data.frame()
-        # wrong format for PLINK
-        FID = G.data[, 1]
-        IID = G.data[, 2]
-        taxa = IID
-        # get selected data
-        trait.name = selectP %>% strsplit(split = "sep") %>% do.call(c, .)
-        Y.data = data.frame(FID = FID, IID = IID, subset(Y.data, ,trait.name))
-        names(Y.data) = c("FID", "IID", trait.name)
-        Y.path = paste0(Y.path %>% substr(1, nchar(.) - 4), "_trait.txt")
-        trait_count = (names(Y.data) %>% length()) - 2
-        suffix = ".qassoc"
-      }
-      cat("Done\n")
-
-      # Covariate
-      if (C.path != "NA") {
-        cat("   Loading covariates ...")
-        C.data = fread(C.path) %>% as.data.frame()
-        if (is.character(C.data[, 1]))
-          C.data = C.data[, -1]
-        C.name = selectC %>% strsplit(split = "sep") %>% do.call(c, .)
-        cat("Done\n")
-      } else {
-        C.name = character()
       }
 
-      # Basic
-      if (model == "GLM") {
-        method = "--assoc"
-      } else {
-        method = "--logistic"
-        suffix = paste0(suffix, ".logistic")
+      ## COV and running PLINK
+      if (length(C.name) > 0) {
+        cov = sprintf(
+          "--covar %s --covar-name %s",
+          paste0('"', C.path, '"'),
+          paste(C.name, collapse = ", ")
+        )
+        paste(basic, MS, MAF, cov) %>% system(input = "notepad")
+      } else{
+        paste(basic, MS, MAF) %>% system(input = "notepad")
       }
-      basic = sprintf(
-        "%s --ped %s --map %s %s --allow-no-sex --adjust -ci %s --pheno %s --all-pheno --prune -out %s",
-        paste0('"', pathPLINK, '"'),
-        paste0('"', GD.path, '"'),
-        paste0('"', GM.path, '"'),
-        method,
-        ci,
-        paste0('"', Y.path, '"'),
-        paste0('"', file.path(wd, project), '"')
+
+      #Loading data
+      cat(sprintf("   Plotting trait %s ...", t))
+      dt_gwas = fread(paste0(project, ".", trait.name[t], suffix), header = T)
+      names(dt_gwas) = c("Chromosome",
+                          "SNP",
+                          "Position",
+                          "NMISS",
+                          "effect",
+                          "SE",
+                          "R2",
+                          "T",
+                          "P.value")
+      dt_gwas[, c(2, 1, 3, 9, 5)] %>% fwrite(
+        file = sprintf("iPat_%s_%s_GWAS.txt", project, trait.name[t]),
+        quote = F,
+        row.names = F,
+        sep = "\t"
       )
-      # QC
-      if (ms != 1)
-        MS = sprintf("--geno %s", ms)
-      else
-        MS = character()
-      if (maf != 0)
-        MAF = sprintf("--maf %s", maf)
-      else
-        MAF = character()
-
-      #Plotting
-      setwd(wd)
-      for (t in 1:trait_count) {
-        ## Rewrite Phenotype
-        if (Y.path != "NA") {
-          tCol = t + 2
-          updateY = Y.data[, c(1:2, tCol)]
-          updateY[is.na(updateY[, 3]), 3] = -9
-          fwrite(
-            x = updateY,
-            file = Y.path,
-            quote = F,
-            row.names = F,
-            sep = '\t'
-          )
-        }
-
-        ## COV and running PLINK
-        if (length(C.name) > 0) {
-          cov = sprintf(
-            "--covar %s --covar-name %s",
-            paste0('"', C.path, '"'),
-            paste(C.name, collapse = ", ")
-          )
-          paste(basic, MS, MAF, cov) %>% system(input = "notepad")
-        } else{
-          paste(basic, MS, MAF) %>% system(input = "notepad")
-        }
-
-        #Loading data
-        cat(sprintf("   Plotting trait %s ...", t))
-        dt_gwas = fread(paste0(project, ".", trait.name[t], suffix), header = T)
-        names(dt_gwas) = c("Chromosome",
-                           "SNP",
-                           "Position",
-                           "NMISS",
-                           "effect",
-                           "SE",
-                           "R2",
-                           "T",
-                           "P.value")
-        dt_gwas[, c(2, 1, 3, 9, 5)] %>% fwrite(
-          file = sprintf("iPat_%s_%s_GWAS.txt", project, trait.name[t]),
-          quote = F,
-          row.names = F,
-          sep = "\t"
-        )
-        dt_out = dt_gwas[, c(1:3, 9)] %>% data.frame()
-        names(dt_out) = c("CHR", "SNP", "BP", "P")
-        iPat.Manhattan(
-          GI.MP = dt_out[, -2],
-          filename = sprintf("iPat_%s_%s", project, trait.name[t])
-        )
-        iPat.QQ(dt_out$P,
-                filename = sprintf("iPat_%s_%s", project, trait.name[t]))
-        iPat.Phenotype.View(
-          myY = data.frame(taxa, updateY[, 3]),
-          filename = sprintf("iPat_%s_%s", project, trait.name[t])
-        )
-        cat("Done\n")
-      }
+      dt_out = dt_gwas[, c(1:3, 9)] %>% data.frame()
+      names(dt_out) = c("CHR", "SNP", "BP", "P")
+      iPat.Manhattan(
+        GI.MP = dt_out[, -2],
+        filename = sprintf("iPat_%s_%s", project, trait.name[t])
+      )
+      iPat.QQ(dt_out$P,
+              filename = sprintf("iPat_%s_%s", project, trait.name[t]))
+      iPat.Phenotype.View(
+        myY = data.frame(taxa, updateY[, 3]),
+        filename = sprintf("iPat_%s_%s", project, trait.name[t])
+      )
+      cat("Done\n")
     }
   }
 }
