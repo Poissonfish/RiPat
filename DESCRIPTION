@@ -7,7 +7,7 @@ Maintainer: James Chen <chun-peng.chen@wsu.edu>
 Description: Fomat-free toolsets for running GWAS and GS in R 
 License: GPL-2
 LazyData: FALSE
-biocViews: multtest
+biocViews: Bioinformatics, TimeCourse
 Imports:
   data.table,  MASS, LDheatmap, genetics, EMMREML, biganalytics,
 	ape, bigmemory, gplots, compiler, scatterplot3d,
