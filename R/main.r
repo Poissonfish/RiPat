@@ -27,6 +27,7 @@ runArgs <- function(args) {
           rawPhenotype = fread(args[i])
           taxa = rawPhenotype[, 1]
           sizeN = nrow(rawPhenotype)
+          selectP = names(rawPhenotype)[-1] %>% paste(collapse="sep")
           cat("Done\n")
         },
         "-pSelect" = {
