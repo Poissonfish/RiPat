@@ -9,7 +9,7 @@ License: GPL-2
 LazyData: FALSE
 biocViews: multtest
 Imports: 
-  ape, BGLR, bigmemory, biganalytics, data.table, EMMREML, genetics, 
+  ape, BGLR, bigmemory, biganalytics, data.table, devtools, EMMREML, genetics, 
   ggplot2, gplots, LDheatmap, magrittr, MASS, R.utils, rrBLUP, scatterplot3d
 
 RoxygenNote: 6.1.1
