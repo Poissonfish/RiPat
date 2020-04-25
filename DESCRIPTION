@@ -8,8 +8,8 @@ Description: Fomat-free toolsets for running GWAS and GS in R
 License: GPL-2
 LazyData: FALSE
 biocViews: multtest
-Imports:
-  data.table,  MASS, LDheatmap, genetics, EMMREML, biganalytics,
-	ape, bigmemory, gplots, compiler, scatterplot3d,
-  R.utils, data.table, magrittr, ggplot2, rrBLUP, BGLR
+Imports: 
+  ape, BGLR, bigmemory, biganalytics, data.table, EMMREML, genetics, 
+  ggplot2, gplots, LDheatmap, magrittr, MASS, R.utils, rrBLUP, scatterplot3d
+
 RoxygenNote: 6.1.1
